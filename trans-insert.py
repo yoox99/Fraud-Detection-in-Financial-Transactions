@@ -1,5 +1,3 @@
-# I-Extraction
-
 import requests
 from datetime import datetime
 import json
@@ -36,37 +34,7 @@ transactions_data = get_data_as_object(transactions_url)
 customers_data = get_data_as_object(customers_url)
 extern_data = get_data_as_object(external_data_url)
 
-# II-Transformations
-
-## transactions_data
-
-### currency
-
-# Exchange rates for currencies to USD
-exchange_rates = {
-    "USD": 1,
-    "EUR": 1.09,
-    "GBP": 1.27
-}
-
-# Function to convert amount to USD based on currency
-def convert_to_usd(amount, currency):
-    if currency in exchange_rates:
-        return amount * exchange_rates[currency]
-    else:
-        return None  # Return None for unknown currencies
-
-# Update transactions_data to include the 'amountUSD' column
-for transaction in transactions_data:
-    amount_usd = convert_to_usd(transaction['amount'], transaction['currency'])
-    transaction['amountUSD'] = amount_usd
-
-
 ## date_time
-
-from datetime import datetime
-
-# Assuming transactions_data is your list of transactions
 
 for transaction in transactions_data:
     # Parse the date_time string into a datetime object
@@ -111,7 +79,6 @@ for customer_id, credit_score in extern_data['credit_scores'].items():
 
 # III-Chargement
 
-## 1-Creation of tables
 from pyhive import hive
 
 # Establish a connection to Hive
@@ -177,19 +144,8 @@ with conn.cursor() as cursor:
 
 
 ## 2-Insertion data into tables
-
-from pyhive import hive
-
-# Establish a connection to Hive
 conn = hive.Connection(host='localhost', port=10000)
-
 database_name = 'financial_data'
-
-# Function to execute queries
-def execute_query(query):
-    with conn.cursor() as cursor:
-        cursor.execute(f"USE {database_name}")
-        cursor.execute(query)
 
 # Insert values into blacklist_info table
 blacklist_info = extern_data['blacklist_info'].split(', ')

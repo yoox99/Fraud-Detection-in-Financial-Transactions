@@ -51,11 +51,11 @@ def detect_fraud():
     WHERE HOUR(timestamp) < 6 OR HOUR(timestamp) > 22;
     """
     
-    # Query 5: Unusual Transaction Types
+    # Query 5: blacklisted customers
     query5 = """
-    SELECT *
-    FROM transactions
-    WHERE transaction_type NOT IN ('purchase', 'withdrawal', 'transfer');
+    SELECT t.*
+    FROM transactions t
+    JOIN customer_blacklist cb ON t.customer_id = cb.customer_id;
     """
 
     # Execute the queries
